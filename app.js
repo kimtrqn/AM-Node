@@ -1,4 +1,5 @@
 const http = require('http');
+const fs = require('fs');
 
 //create and return server
 const server = http.createServer((req, res) => {
@@ -7,18 +8,27 @@ const server = http.createServer((req, res) => {
   if (url === '/') {
     res.write('<html>');
     res.write('<head><title>Enter Message</title><head>');
+    //form
     res.write('<body><form action="/message" method="POST"><input type="text" name="message"><button type="submit">Send</button></form></body>');
     res.write('</html>');
     return res.end();
   }
   if (url === '/message' && method === 'POST') {
     const body = [];
+    // on => allow to listen to certain event, listening 
+    // to 'data' event
     req.on('data', (chunk) => {
-      console.log(chunk);
+        //chuck is in binary form => number code
+      console.log('chuck', chunk);
       body.push(chunk);
     });
+    //to buffer or interact with the body
+    // buffer allocate raw binary data
     req.on('end', () => {
+      //data is a text in binary form and convert into a string
       const parsedBody = Buffer.concat(body).toString();
+      console.log('buffer', parsedBody);
+      // message=dfas => [message, dfas]
       const message = parsedBody.split('=')[1];
       fs.writeFileSync('message.txt', message);
     });
@@ -34,7 +44,7 @@ const server = http.createServer((req, res) => {
   res.end();
 });
 
-//listen start a process keep it running for incomign
+//listen start a process keep it running for incoming
 //request
 server.listen(3000);
 
