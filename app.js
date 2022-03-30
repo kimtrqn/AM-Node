@@ -5,6 +5,7 @@ const fs = require('fs');
 const server = http.createServer((req, res) => {
   const url = req.url;
   const method = req.method;
+
   if (url === '/') {
     res.write('<html>');
     res.write('<head><title>Enter Message</title><head>');
@@ -22,19 +23,21 @@ const server = http.createServer((req, res) => {
       console.log('chuck', chunk);
       body.push(chunk);
     });
+    // 'end' it will fire at the end after the request is done parsing
     //to buffer or interact with the body
     // buffer allocate raw binary data
-    req.on('end', () => {
+    return req.on('end', () => {
       //data is a text in binary form and convert into a string
       const parsedBody = Buffer.concat(body).toString();
       console.log('buffer', parsedBody);
       // message=dfas => [message, dfas]
       const message = parsedBody.split('=')[1];
-      fs.writeFileSync('message.txt', message);
+      fs.writeFile('message.txt', message, (err) => {
+        res.statusCode = 302;
+        res.setHeader('Location', '/');
+        return res.end();
+      });
     });
-    res.statusCode = 302;
-    res.setHeader('Location', '/');
-    return res.end();
   }
   res.setHeader('Content-Type', 'text/html');
   res.write('<html>');
