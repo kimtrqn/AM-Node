@@ -5,6 +5,7 @@
       const method = req.method;
 
       if (url === '/') {
+        
         res.write('<html>');
         res.write('<head><title>Enter Message</title><head>');
         //form
@@ -31,8 +32,10 @@
           // message=dfas => [message, dfas]
           const message = parsedBody.split('=')[1];
           fs.writeFile('message.txt', message, (err) => {
+            //status 302 is a redirect status so it can redirect to anthoer page  
             res.statusCode = 302;
             res.setHeader('Location', '/');
+            //always res.end() to return and end the fuction
             return res.end();
           });
         });
@@ -45,5 +48,5 @@
       res.end();
   }
 
-module.exports = {requestHandler};
+module.exports = { requestHandler };
   
