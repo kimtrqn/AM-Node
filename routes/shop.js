@@ -9,7 +9,7 @@ const adminRouter = require('./admin')
 router.get('/shop', (req, res, next) => {
     console.log(adminRouter.products)
     // res.sendFile(path.join(rootDir, 'views', 'shop.pug'))
-    res.render('shop')
+    res.render('shop', { products: adminRouter.products, docTitle: 'Shop'})
 });
 
 router.get('/', (req, res, next) => {
